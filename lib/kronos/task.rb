@@ -13,17 +13,21 @@ module Kronos
     private
 
     def check_id(id)
-      id.kind_of?(Symbol) ? id : raise(ArgumentError, "Invalid Task ID given (#{id.class}). Symbol expected.")
+      id.is_a?(Symbol) ? id : raise_invalid_argument('Task ID', id, Symbol)
     end
 
     def check_block(block)
-      block.kind_of?(Proc) ? block : raise(ArgumentError, "Invalid block given (#{id.class}). Proc expected.")
+      block.is_a?(Proc) ? block : raise_invalid_argument('block', block, Proc)
     end
 
     def parse_time(timestamp)
       Chronic.parse(timestamp) || raise_unrecognized_time_format
     rescue
       raise_unrecognized_time_format
+    end
+
+    def raise_invalid_argument(name, received, expectation)
+      raise(ArgumentError, "Invalid #{name} given (#{received.class}). #{expectation} expected.")
     end
 
     def raise_unrecognized_time_format

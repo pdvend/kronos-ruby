@@ -6,11 +6,11 @@ module Kronos
 
     def initialize(registered_ids)
       @tasks = []
-      raise(ArgumentError) unless registered_ids.kind_of?(Array)
+      raise(ArgumentError) unless registered_ids.is_a?(Array)
       @registered_ids = registered_ids
     end
 
-    def register(id, timestamp, options = {}, &block)
+    def register(id, timestamp, &block)
       raise(Kronos::Exception::AlreadyRegisteredId) if @registered_ids.include?(id)
 
       task = Kronos::Task.new(id, timestamp, block)

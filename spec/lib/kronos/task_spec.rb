@@ -3,7 +3,7 @@
 RSpec.describe Kronos::Task do
   let(:id) { :task_id }
   let(:timestamp) { 'monday' }
-  let(:block) { ->(*){} }
+  let(:block) { ->(*) {} }
 
   describe '.new' do
     subject { described_class.new(id, timestamp, block) }
@@ -35,7 +35,7 @@ RSpec.describe Kronos::Task do
     let(:timestamp) { '1979-05-27 05:00:00' }
     it { is_expected.to be_a(Time) }
     it { expect(subject.year).to be(1979) }
-    it { expect(subject.month).to be(05) }
+    it { expect(subject.month).to be(5) }
     it { expect(subject.day).to be(27) }
     it { expect(subject.hour).to be(5) }
     it { expect(subject.min).to be(0) }
