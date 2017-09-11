@@ -25,7 +25,7 @@ RSpec.describe Kronos::Runner::Synchronous do
     context 'when registered tasks are not pending' do
       before do
         allow(storage).to receive(:pending?).and_return(false)
-        allow(storage).to receive(:pending_tasks).and_return([])
+        allow(storage).to receive(:resolved_tasks).and_return([])
       end
 
       context 'when task time is in the future' do
@@ -50,7 +50,7 @@ RSpec.describe Kronos::Runner::Synchronous do
     context 'when registered tasks are pending' do
       before do
         allow(storage).to receive(:pending?).and_return(true)
-        allow(storage).to receive(:pending_tasks).and_return([])
+        allow(storage).to receive(:resolved_tasks).and_return([])
       end
 
       it 'does not reschedules the task' do
@@ -59,10 +59,10 @@ RSpec.describe Kronos::Runner::Synchronous do
       end
     end
 
-    context 'when there are unregistered pending tasks' do
+    context 'when there are unregistered resolved tasks' do
       before do
         allow(storage).to receive(:pending?).and_return(true)
-        allow(storage).to receive(:pending_tasks).and_return([:not_registered_id])
+        allow(storage).to receive(:resolved_tasks).and_return([:not_registered_id])
       end
 
       it 'removes task from schedule' do
@@ -71,10 +71,10 @@ RSpec.describe Kronos::Runner::Synchronous do
       end
     end
 
-    context 'when there are registered pending tasks' do
+    context 'when there are registered resolved tasks' do
       before do
         allow(storage).to receive(:pending?).and_return(false)
-        allow(storage).to receive(:pending_tasks).and_return(tasks.map(&:id))
+        allow(storage).to receive(:resolved_tasks).and_return(tasks.map(&:id))
         allow(storage).to receive(:register_task_success)
       end
 

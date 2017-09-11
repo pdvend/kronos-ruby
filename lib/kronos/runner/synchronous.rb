@@ -29,8 +29,8 @@ module Kronos
 
       def start
         loop do
+          run_resolved_tasks
           schedule_current_tasks
-          run_pending_tasks
 
           # TODO: Configurable sleep between runs
           sleep(1)
@@ -47,8 +47,8 @@ module Kronos
         schedule_next_run(task) unless @storage.pending?(task)
       end
 
-      def run_pending_tasks
-        @storage.pending_tasks.each(&method(:process_task))
+      def run_resolved_tasks
+        @storage.resolved_tasks.each(&method(:process_task))
       end
 
       def process_task(task_id)

@@ -18,8 +18,9 @@ module Kronos
       self
     end
 
-    def storage(storage)
+    def storage(storage, *config)
       @_storage = storage
+      @storage_config = config
       self
     end
 
@@ -35,7 +36,7 @@ module Kronos
 
     def storage_instance
       raise(Kronos::Exception::NoStorageRegistered) unless _storage
-      _storage.new
+      _storage.new(*@storage_config)
     end
 
     private

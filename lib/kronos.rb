@@ -3,6 +3,7 @@
 require 'kronos/config_agent'
 require 'kronos/exception'
 require 'kronos/runner'
+require 'kronos/storage'
 require 'kronos/task'
 require 'kronos/version'
 
