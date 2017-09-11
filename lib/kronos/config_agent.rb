@@ -4,19 +4,17 @@ module Kronos
   class ConfigAgent
     attr_reader :tasks
 
-    def initialize(registered_ids)
+    def initialize
       @tasks = []
-      raise(ArgumentError) unless registered_ids.is_a?(Array)
-      @registered_ids = registered_ids
     end
 
     def register(id, timestamp, &block)
-      raise(Kronos::Exception::AlreadyRegisteredId) if @registered_ids.include?(id)
+      raise(Kronos::Exception::AlreadyRegisteredId) if @tasks.lazy.map(&:id).include?(id)
 
       task = Kronos::Task.new(id, timestamp, block)
       tasks.push(task)
 
-      @registered_ids << id
+      self
     end
   end
 end

@@ -8,22 +8,11 @@ require 'kronos/task'
 require 'chronic'
 
 module Kronos
-  @tasks = []
+  @config_agent = Kronos::ConfigAgent.new
 
   module_function
 
   def config
-    agent = Kronos::ConfigAgent.new(@tasks.map(&:id))
-    yield(agent)
-    @tasks += agent.tasks
-  end
-
-  def tasks
-    @tasks
-  end
-
-  def clear_tasks
-    @tasks.clear
-    nil
+    @config_agent
   end
 end

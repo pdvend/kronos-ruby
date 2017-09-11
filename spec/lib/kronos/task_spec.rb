@@ -33,13 +33,16 @@ RSpec.describe Kronos::Task do
   describe '#time' do
     subject { described_class.new(id, timestamp, block).time }
     let(:timestamp) { '1979-05-27 05:00:00' }
+
     it { is_expected.to be_a(Time) }
-    it { expect(subject.year).to be(1979) }
-    it { expect(subject.month).to be(5) }
-    it { expect(subject.day).to be(27) }
-    it { expect(subject.hour).to be(5) }
-    it { expect(subject.min).to be(0) }
-    it { expect(subject.sec).to be(0) }
+    it 'should correctly parse time' do
+      expect(subject.year).to be(1979)
+      expect(subject.month).to be(5)
+      expect(subject.day).to be(27)
+      expect(subject.hour).to be(5)
+      expect(subject.min).to be(0)
+      expect(subject.sec).to be(0)
+    end
   end
 
   describe '#block' do
