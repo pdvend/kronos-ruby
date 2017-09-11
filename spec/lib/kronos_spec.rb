@@ -12,14 +12,18 @@ RSpec.describe Kronos do
     subject { described_class.start }
     let(:runner) { double('runner') }
     let(:runner_instance) { double('runner_instance') }
+    let(:storage) { double('storage') }
+    let(:storage_instance) { double('storage_instance') }
 
     before do
-      described_class.config.runner(runner)
+      described_class.config.runner(runner).storage(storage)
       allow(runner).to receive(:new).and_return(runner_instance)
+      allow(storage).to receive(:new).and_return(storage_instance)
       allow(runner_instance).to receive(:start)
     end
 
     it { expect { subject }.to_not raise_error }
+
     it 'should start runner' do
       expect(runner_instance).to receive(:start)
       subject

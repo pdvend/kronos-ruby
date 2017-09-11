@@ -47,6 +47,15 @@ RSpec.describe Kronos::ConfigAgent do
     it { is_expected.to be(instance) }
   end
 
+  describe '#storage' do
+    subject { instance.storage(storage) }
+    let!(:instance) { described_class.new }
+    let(:storage) { double('storage') }
+
+    it { expect { subject }.to_not raise_error }
+    it { is_expected.to be(instance) }
+  end
+
   describe '#runner_instance' do
     subject { instance.runner_instance }
     let!(:instance) { described_class.new }
@@ -58,13 +67,37 @@ RSpec.describe Kronos::ConfigAgent do
     context 'when a runner was previosly registered' do
       let(:runner) { double('runner') }
       let(:runner_instance) { double('runner_instance') }
+      let(:storage) { double('storage') }
+      let(:storage_instance) { double('storage_instance') }
 
       before do
-        instance.runner(runner)
-        allow(runner).to receive(:new).and_return(runner_instance)
+        instance.runner(runner).storage(storage)
+        allow(runner).to receive(:new).with([], storage_instance).and_return(runner_instance)
+        allow(storage).to receive(:new).and_return(storage_instance)
       end
 
       it { is_expected.to be(runner_instance) }
+    end
+  end
+
+  describe '#storage_instance' do
+    subject { instance.storage_instance }
+    let!(:instance) { described_class.new }
+
+    context 'when no storage was previosly registered' do
+      it { expect { subject }.to raise_error(Kronos::Exception::NoStorageRegistered) }
+    end
+
+    context 'when a storage was previosly registered' do
+      let(:storage) { double('storage') }
+      let(:storage_instance) { double('storage_instance') }
+
+      before do
+        instance.storage(storage)
+        allow(storage).to receive(:new).and_return(storage_instance)
+      end
+
+      it { is_expected.to be(storage_instance) }
     end
   end
 end

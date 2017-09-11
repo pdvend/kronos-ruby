@@ -18,6 +18,11 @@ module Kronos
       self
     end
 
+    def storage(storage)
+      @storage = storage
+      self
+    end
+
     def runner(runner)
       @runner = runner
       self
@@ -25,7 +30,12 @@ module Kronos
 
     def runner_instance
       raise(Kronos::Exception::NoRunnerRegistered) if @runner.nil?
-      @runner.new
+      @runner.new(tasks, storage_instance)
+    end
+
+    def storage_instance
+      raise(Kronos::Exception::NoStorageRegistered) if @storage.nil?
+      @storage.new
     end
   end
 end
