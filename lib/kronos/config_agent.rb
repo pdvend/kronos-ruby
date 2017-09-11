@@ -6,6 +6,7 @@ module Kronos
 
     def initialize
       @tasks = []
+      @runner_class = nil
     end
 
     def register(id, timestamp, &block)
@@ -15,6 +16,16 @@ module Kronos
       tasks.push(task)
 
       self
+    end
+
+    def runner(runner)
+      @runner = runner
+      self
+    end
+
+    def runner_instance
+      raise(Kronos::Exception::NoRunnerRegistered) if @runner.nil?
+      @runner.new
     end
   end
 end

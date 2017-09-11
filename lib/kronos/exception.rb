@@ -5,5 +5,6 @@ module Kronos
   end
 end
 
-require 'kronos/exception/unrecognized_time_format'
 require 'kronos/exception/already_registered_id'
+require 'kronos/exception/no_runner_registered'
+require 'kronos/exception/unrecognized_time_format'

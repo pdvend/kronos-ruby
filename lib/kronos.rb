@@ -15,4 +15,8 @@ module Kronos
   def config
     @config_agent
   end
+
+  def start
+    @config_agent.runner_instance.start
+  end
 end
