@@ -12,7 +12,7 @@ RSpec.describe Kronos::ConfigAgent do
     let(:id) { :task2 }
     let(:timestamp) { 'monday' }
 
-    it { expect { subject }.to change { instance.tasks } }
+    it { expect { subject }.to(change { instance.tasks }) }
     it { is_expected.to be(instance) }
 
     context 'when id is registered twice' do

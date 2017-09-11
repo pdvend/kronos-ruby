@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-require 'kronos/version'
 require 'kronos/config_agent'
 require 'kronos/exception'
+require 'kronos/runner'
 require 'kronos/task'
+require 'kronos/version'
 
 require 'chronic'
 

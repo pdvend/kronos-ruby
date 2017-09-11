@@ -2,12 +2,19 @@
 
 module Kronos
   class Task
-    attr_reader :id, :time, :block, :last_run
+    attr_reader :id, :block
 
-    def initialize(id, time, block)
+    def initialize(id, timestamp, block)
       @id = check_id(id)
-      @time = parse_time(time)
+      @timestamp = timestamp
+      time # check timestamp parseability
       @block = check_block(block)
+    end
+
+    def time
+      Chronic.parse(@timestamp) || raise_unrecognized_time_format
+    rescue
+      raise_unrecognized_time_format
     end
 
     private
@@ -18,12 +25,6 @@ module Kronos
 
     def check_block(block)
       block.is_a?(Proc) ? block : raise_invalid_argument('block', block, Proc)
-    end
-
-    def parse_time(timestamp)
-      Chronic.parse(timestamp) || raise_unrecognized_time_format
-    rescue
-      raise_unrecognized_time_format
     end
 
     def raise_invalid_argument(name, received, expectation)

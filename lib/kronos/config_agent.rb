@@ -19,23 +19,27 @@ module Kronos
     end
 
     def storage(storage)
-      @storage = storage
+      @_storage = storage
       self
     end
 
     def runner(runner)
-      @runner = runner
+      @_runner = runner
       self
     end
 
     def runner_instance
-      raise(Kronos::Exception::NoRunnerRegistered) if @runner.nil?
-      @runner.new(tasks, storage_instance)
+      raise(Kronos::Exception::NoRunnerRegistered) unless _runner
+      _runner.new(tasks, storage_instance)
     end
 
     def storage_instance
-      raise(Kronos::Exception::NoStorageRegistered) if @storage.nil?
-      @storage.new
+      raise(Kronos::Exception::NoStorageRegistered) unless _storage
+      _storage.new
     end
+
+    private
+
+    attr_accessor :_runner, :_storage
   end
 end
