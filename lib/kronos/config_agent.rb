@@ -20,28 +20,34 @@ module Kronos
 
     def storage(storage, *config)
       @_storage = storage
+      @storage_instance = nil
       @storage_config = config
       self
     end
 
     def runner(runner)
       @_runner = runner
+      @runner_instance = nil
       self
     end
 
     def runner_instance
-      raise(Kronos::Exception::NoRunnerRegistered) unless _runner
+      @runner_instance ||= begin
+        raise(Kronos::Exception::NoRunnerRegistered) unless _runner
 
-      dependencies = Kronos::Dependencies.new(
-        storage: storage_instance
-      )
+        dependencies = Kronos::Dependencies.new(
+          storage: storage_instance
+        )
 
-      _runner.new(tasks, dependencies)
+        _runner.new(tasks, dependencies)
+      end
     end
 
     def storage_instance
-      raise(Kronos::Exception::NoStorageRegistered) unless _storage
-      _storage.new(*@storage_config)
+      @storage_instance ||= begin
+        raise(Kronos::Exception::NoStorageRegistered) unless _storage
+        _storage.new(*@storage_config)
+      end
     end
 
     private
