@@ -6,11 +6,11 @@ require 'chronic'
 require 'kronos/config_agent'
 require 'kronos/dependencies'
 require 'kronos/exception'
+require 'kronos/report'
 require 'kronos/runner'
 require 'kronos/storage'
 require 'kronos/task'
 require 'kronos/version'
-
 
 module Kronos
   @config_agent = Kronos::ConfigAgent.new

@@ -6,7 +6,7 @@ module Kronos
 
     def initialize
       @tasks = []
-      @runner_class = nil
+      @instance = {}
     end
 
     def register(id, timestamp, &block)
@@ -19,20 +19,18 @@ module Kronos
     end
 
     def storage(storage, *config)
-      @_storage = storage
-      @storage_instance = nil
-      @storage_config = config
+      @instance[:storage] = storage.new(*config)
       self
     end
 
     def runner(runner)
       @_runner = runner
-      @runner_instance = nil
+      @instance[:runner] = nil
       self
     end
 
     def runner_instance
-      @runner_instance ||= begin
+      @instance[:runner] ||= begin
         raise(Kronos::Exception::NoRunnerRegistered) unless _runner
 
         dependencies = Kronos::Dependencies.new(
@@ -44,10 +42,7 @@ module Kronos
     end
 
     def storage_instance
-      @storage_instance ||= begin
-        raise(Kronos::Exception::NoStorageRegistered) unless _storage
-        _storage.new(*@storage_config)
-      end
+      @instance[:storage] || raise(Kronos::Exception::NoStorageRegistered)
     end
 
     private

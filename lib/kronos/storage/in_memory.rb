@@ -1,10 +1,11 @@
-# frozen_string_literals: true
+# frozen_string_literal: true
 
 module Kronos
   module Storage
     class InMemory
       def initialize
         @tasks = []
+        @reports = []
       end
 
       def pending?(task)
@@ -29,20 +30,24 @@ module Kronos
       end
 
       def remove(id)
-        @tasks.reject!{|(task, _next_run)| task.id == id }
+        @tasks.reject! { |(task, _next_run)| task.id == id }
+        remove_reports_for(id)
       end
 
-      def register_task_success(_task, _metadata)
-        # TODO
-      end
-
-      def register_task_failure(_task, _error)
-        # TODO
+      def register_report(report)
+        remove_reports_for(report.task.id)
+        @reports << report
       end
 
       def schedule(task, next_run)
         remove(task.id)
         @tasks.push([task, next_run])
+      end
+
+      private
+
+      def remove_reports_for(id)
+        @reports.reject! { |report| report.task.id == id }
       end
     end
   end

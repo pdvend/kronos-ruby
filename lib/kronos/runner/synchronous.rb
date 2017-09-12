@@ -63,10 +63,10 @@ module Kronos
         @dependencies.storage.remove(task_id)
       end
 
-      # rubocop:disable RescueException, ShadowedException
+      # rubocop:disable RescueException
       def run_task(task)
         raw_execute_task(task)
-      rescue StandardError, Exception => error
+      rescue ::Exception => error
         register_task_failure(task, error)
       end
       # rubocop:enable
@@ -74,12 +74,12 @@ module Kronos
       def raw_execute_task(task)
         metadata = collect_metadata { task.block.call }
         puts "[Kronos] Task `#{task.id}` ran successfully."
-        @dependencies.storage.register_task_success(task, metadata)
+        @dependencies.storage.register_report(Kronos::Report.success_from(task, metadata))
       end
 
       def register_task_failure(task, error)
         puts "[Kronos] Task `#{task.id}` failed."
-        @dependencies.storage.register_task_failure(task, error)
+        @dependencies.storage.register_report(Kronos::Report.failure_from(task, error))
       end
 
       def collect_metadata(&block)

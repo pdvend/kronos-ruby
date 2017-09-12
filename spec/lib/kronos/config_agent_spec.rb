@@ -51,6 +51,11 @@ RSpec.describe Kronos::ConfigAgent do
     subject { instance.storage(storage) }
     let!(:instance) { described_class.new }
     let(:storage) { double('storage') }
+    let(:storage_instance) { double('storage_instance') }
+
+    before do
+      allow(storage).to receive(:new).and_return(storage_instance)
+    end
 
     it { expect { subject }.to_not raise_error }
     it { is_expected.to be(instance) }
@@ -71,9 +76,9 @@ RSpec.describe Kronos::ConfigAgent do
       let(:storage_instance) { double('storage_instance') }
 
       before do
-        instance.runner(runner).storage(storage)
         allow(runner).to receive(:new).with([], kind_of(Kronos::Dependencies)).and_return(runner_instance)
         allow(storage).to receive(:new).and_return(storage_instance)
+        instance.runner(runner).storage(storage)
       end
 
       it { is_expected.to be(runner_instance) }
@@ -93,8 +98,8 @@ RSpec.describe Kronos::ConfigAgent do
       let(:storage_instance) { double('storage_instance') }
 
       before do
-        instance.storage(storage)
         allow(storage).to receive(:new).and_return(storage_instance)
+        instance.storage(storage)
       end
 
       it { is_expected.to be(storage_instance) }

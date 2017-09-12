@@ -76,7 +76,7 @@ RSpec.describe Kronos::Runner::Synchronous do
       before do
         allow(storage).to receive(:pending?).and_return(false)
         allow(storage).to receive(:resolved_tasks).and_return(tasks.map(&:id))
-        allow(storage).to receive(:register_task_success)
+        allow(storage).to receive(:register_report)
       end
 
       it 'executes the task block' do
@@ -86,7 +86,7 @@ RSpec.describe Kronos::Runner::Synchronous do
 
       context 'when task execution succeeds' do
         it 'registers success' do
-          expect(storage).to receive(:register_task_success).with(tasks.first, kind_of(Hash))
+          expect(storage).to receive(:register_report).with(kind_of(Kronos::Report))
           subject
         end
       end
@@ -99,7 +99,7 @@ RSpec.describe Kronos::Runner::Synchronous do
         let(:error) { RuntimeError.new('fake error') }
 
         it 'registers failure' do
-          expect(storage).to receive(:register_task_failure).with(tasks.first, error)
+          expect(storage).to receive(:register_report).with(kind_of(Kronos::Report))
           subject
         end
       end
