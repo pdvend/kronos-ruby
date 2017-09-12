@@ -27,9 +27,9 @@ Or install it yourself as:
 # Define your environment preferences (runner and storage) and register your tasks
 Kronos
   .config
-  .runner(Kronos::Runner::Synchronous)
+  .runner(Kronos::Runner::Synchronous) # or .runner(Kronos::Runner::Asynchronous)
   .storage(Kronos::Storage::InMemory)
-  .logger(Kronos::Logger::Stdout)
+  .logger(Kronos::Logger::Stdout) # or .logger(Kronos::Logger::Slack, "Your Slack Webhook URL here")
   .register(:say_good_morning, '8am') { puts 'Good Morning, Team!' }
   .register(:wish_happy_weekend, 'friday, 6pm') { puts 'Happy Weekend, Team!' }
   # ...
