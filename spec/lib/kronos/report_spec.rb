@@ -85,5 +85,4 @@ RSpec.describe Kronos::Report do
       it { expect { subject }.to raise_error(ArgumentError) }
     end
   end
-
 end
