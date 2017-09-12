@@ -1,2 +1,5 @@
 IrresponsibleModule:
   enabled: false
+
+exclude_paths:
+  - vendor/bundle
