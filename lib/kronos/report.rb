@@ -35,11 +35,6 @@ module Kronos
         task.is_a?(Kronos::Task) ? task : raise_invalid_argument('task', task, Kronos::Task)
       end
 
-      def check_status(status)
-        return status if Kronos::Report::STATUSES.values.include?(status)
-        raise(ArgumentError, "Invalid status given (#{status}). Expected one of Kronos::Report::STATUSES")
-      end
-
       def check_metadata(metadata)
         raise_invalid_argument('metadata', metadata, Hash) unless metadata.is_a?(Hash)
         return metadata if metadata.values.all? { |value| value.is_a?(String) }
