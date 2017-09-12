@@ -6,7 +6,6 @@ RSpec.describe Kronos::Logger::Stdout do
     it { expect { subject }.to_not raise_error }
   end
 
-
   describe '#info' do
     subject { described_class.new.info(message) }
     let(:message) { 'foo bar' }
