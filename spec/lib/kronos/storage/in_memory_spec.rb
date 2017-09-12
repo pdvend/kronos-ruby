@@ -10,7 +10,7 @@ RSpec.describe Kronos::Storage::InMemory do
     subject { instance.schedule(task, next_run) }
     let(:instance) { described_class.new }
     let(:task) { Kronos::Task.new(:task, '1 day from now', ->() {}) }
-    let(:next_run) { Time.now + 68400 }
+    let(:next_run) { Time.now + 86_400 }
 
     context 'when task is not scheduled' do
       it { expect { subject }.to_not raise_error }
@@ -81,12 +81,12 @@ RSpec.describe Kronos::Storage::InMemory do
       before { instance.schedule(task, next_run) }
 
       context 'when task is resolved' do
-        let(:next_run) { Time.now - 86400 }
+        let(:next_run) { Time.now - 86_400 }
         it { is_expected.to be_falsey }
       end
 
       context 'when task is pending' do
-        let(:next_run) { Time.now + 86400 }
+        let(:next_run) { Time.now + 86_400 }
         it { is_expected.to be_truthy }
       end
     end
@@ -106,8 +106,8 @@ RSpec.describe Kronos::Storage::InMemory do
 
     context 'when there are registered tasks' do
       before do
-        instance.schedule(task1, Time.now - 86400)
-        instance.schedule(task2, Time.now + 86400)
+        instance.schedule(task1, Time.now - 86_400)
+        instance.schedule(task2, Time.now + 86_400)
       end
 
       it 'returns only resolved task ids' do
