@@ -2,7 +2,6 @@
 
 module Kronos
   module Runner
-    # TODO: Logger instead of puts
     class Synchronous
       # TODO: Let consumer configure it
       METADATA_COLLECTORS = [
@@ -98,7 +97,7 @@ module Kronos
       end
 
       def schedule(task, next_run)
-        @dependencies.logger.info("Scheduling #{task.id} to run #{next_run.iso8601}")
+        @dependencies.logger.info("Scheduling `#{task.id}` to run `#{next_run.iso8601}`")
         @dependencies.storage.schedule(task, next_run)
       end
 

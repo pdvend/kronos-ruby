@@ -6,3 +6,4 @@ module Kronos
 end
 
 require 'kronos/logger/stdout'
+require 'kronos/logger/slack'

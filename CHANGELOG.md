@@ -3,7 +3,7 @@
 ## CHANGELOG
 
 ### Unreleased
-- [Added] Logger structure (Stdout)
+- [Added] Logger structure (Stdout and Slack)
 - [Added] Storage structure (InMemory)
 - [Added] Runner structure (Synchronous/Asynchronous)
 - [Added] Config structure
