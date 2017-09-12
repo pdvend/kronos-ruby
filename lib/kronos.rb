@@ -4,6 +4,7 @@ require 'concurrent'
 require 'chronic'
 
 require 'kronos/config_agent'
+require 'kronos/dependencies'
 require 'kronos/exception'
 require 'kronos/runner'
 require 'kronos/storage'

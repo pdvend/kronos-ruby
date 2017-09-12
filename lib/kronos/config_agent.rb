@@ -31,7 +31,12 @@ module Kronos
 
     def runner_instance
       raise(Kronos::Exception::NoRunnerRegistered) unless _runner
-      _runner.new(tasks, storage_instance)
+
+      dependencies = Kronos::Dependencies.new(
+        storage: storage_instance
+      )
+
+      _runner.new(tasks, dependencies)
     end
 
     def storage_instance

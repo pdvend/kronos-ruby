@@ -72,7 +72,7 @@ RSpec.describe Kronos::ConfigAgent do
 
       before do
         instance.runner(runner).storage(storage)
-        allow(runner).to receive(:new).with([], storage_instance).and_return(runner_instance)
+        allow(runner).to receive(:new).with([], kind_of(Kronos::Dependencies)).and_return(runner_instance)
         allow(storage).to receive(:new).and_return(storage_instance)
       end
 

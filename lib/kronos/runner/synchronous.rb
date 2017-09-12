@@ -22,9 +22,9 @@ module Kronos
         end
       end
 
-      def initialize(tasks, storage)
+      def initialize(tasks, dependencies)
         @tasks = tasks
-        @storage = storage
+        @dependencies = dependencies
       end
 
       def start
@@ -44,11 +44,11 @@ module Kronos
       end
 
       def schedule_task(task)
-        schedule_next_run(task) unless @storage.pending?(task)
+        schedule_next_run(task) unless @dependencies.storage.pending?(task)
       end
 
       def run_resolved_tasks
-        @storage.resolved_tasks.each(&method(:process_task))
+        @dependencies.storage.resolved_tasks.each(&method(:process_task))
       end
 
       def process_task(task_id)
@@ -60,7 +60,7 @@ module Kronos
 
       def remove_task_from_schedule(task_id)
         puts "[Kronos] Task `#{task_id}` was removed from definitions. Removing from schedule too."
-        @storage.remove(task_id)
+        @dependencies.storage.remove(task_id)
       end
 
       # rubocop:disable RescueException, ShadowedException
@@ -74,12 +74,12 @@ module Kronos
       def raw_execute_task(task)
         metadata = collect_metadata { task.block.call }
         puts "[Kronos] Task `#{task.id}` ran successfully."
-        @storage.register_task_success(task, metadata)
+        @dependencies.storage.register_task_success(task, metadata)
       end
 
       def register_task_failure(task, error)
         puts "[Kronos] Task `#{task.id}` failed."
-        @storage.register_task_failure(task, error)
+        @dependencies.storage.register_task_failure(task, error)
       end
 
       def collect_metadata(&block)
@@ -93,7 +93,7 @@ module Kronos
         next_run = task.time
         return if next_run < Time.now
         puts "[Kronos] Scheduling #{task.id} to run #{next_run.iso8601}"
-        @storage.schedule(task, next_run)
+        @dependencies.storage.schedule(task, next_run)
       end
 
       def find_task(task_id)

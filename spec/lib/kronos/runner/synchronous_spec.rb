@@ -3,6 +3,7 @@
 RSpec.describe Kronos::Runner::Synchronous do
   let(:tasks) { [] }
   let(:storage) { double('storage') }
+  let(:dependencies) { Kronos::Dependencies.new(storage: storage) }
 
   describe '.new' do
     subject { described_class.new(tasks, storage) }
@@ -10,7 +11,7 @@ RSpec.describe Kronos::Runner::Synchronous do
   end
 
   describe '#start' do
-    subject { described_class.new(tasks, storage).start }
+    subject { described_class.new(tasks, dependencies).start }
 
     before do
       allow_any_instance_of(described_class).to receive(:loop).and_yield
