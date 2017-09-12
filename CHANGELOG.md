@@ -3,6 +3,7 @@
 ## CHANGELOG
 
 ### Unreleased
+- [Added] Logger structure (Stdout)
 - [Added] Storage structure (InMemory)
 - [Added] Runner structure (Synchronous/Asynchronous)
 - [Added] Config structure

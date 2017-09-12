@@ -29,6 +29,7 @@ Kronos
   .config
   .runner(Kronos::Runner::Synchronous)
   .storage(Kronos::Storage::InMemory)
+  .logger(Kronos::Logger::Stdout)
   .register(:say_good_morning, '8am') { puts 'Good Morning, Team!' }
   .register(:wish_happy_weekend, 'friday, 6pm') { puts 'Happy Weekend, Team!' }
   # ...

@@ -53,9 +53,16 @@ RSpec.describe Kronos::Runner::Synchronous do
       context 'when task time is in the past' do
         let(:timestamp) { '10 seconds ago' }
 
+        before do
+          allow(storage).to receive(:remove)
+        end
+
         it 'does not reschedules the task' do
           expect(storage).to_not receive(:schedule)
           subject
+        end
+
+        it 'removes task from schedule' do
         end
       end
     end
@@ -77,10 +84,16 @@ RSpec.describe Kronos::Runner::Synchronous do
         allow(storage).to receive(:pending?).and_return(true)
         allow(storage).to receive(:resolved_tasks).and_return([:not_registered_id])
         allow(storage).to receive(:remove)
+        allow(storage).to receive(:remove_reports_for)
       end
 
       it 'removes task from schedule' do
         expect(storage).to receive(:remove).with(:not_registered_id)
+        subject
+      end
+
+      it 'removes task reports' do
+        expect(storage).to receive(:remove_reports_for).with(:not_registered_id)
         subject
       end
 
@@ -95,10 +108,16 @@ RSpec.describe Kronos::Runner::Synchronous do
         allow(storage).to receive(:pending?).and_return(false)
         allow(storage).to receive(:resolved_tasks).and_return(tasks.map(&:id))
         allow(storage).to receive(:register_report)
+        allow(storage).to receive(:remove)
       end
 
       it 'executes the task block' do
         expect(block).to receive(:call)
+        subject
+      end
+
+      it 'removes task from schedule' do
+        expect(storage).to receive(:remove).with(:task1)
         subject
       end
 

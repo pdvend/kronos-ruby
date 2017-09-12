@@ -43,10 +43,7 @@ module Kronos
 
       def remove(task_id)
         @tasks.reject! { |(task, _next_run)| task.id == task_id }
-        remove_reports_for(task_id)
       end
-
-      private
 
       def remove_reports_for(id)
         @reports.reject! { |report| report.task.id == id }

@@ -11,7 +11,7 @@ module Kronos
           result = block.call
           finish = Time.now
 
-          { **result, start: start, finish: finish, duration: finish - start }
+          { **result, start: start.to_s, finish: finish.to_s, duration: (finish - start).to_s }
         end
       ].freeze
 
@@ -60,7 +60,9 @@ module Kronos
 
       def remove_task_from_schedule(task_id)
         @dependencies.logger.info("Task `#{task_id}` was removed from definitions. Removing from schedule too.")
-        @dependencies.storage.remove(task_id)
+        storage = @dependencies.storage
+        storage.remove(task_id)
+        storage.remove_reports_for(task_id)
       end
 
       # rubocop:disable RescueException
@@ -91,7 +93,11 @@ module Kronos
 
       def schedule_next_run(task)
         next_run = task.time
-        return if next_run < Time.now
+        return @dependencies.storage.remove(task.id) if next_run < Time.now
+        schedule(task, next_run)
+      end
+
+      def schedule(task, next_run)
         @dependencies.logger.info("Scheduling #{task.id} to run #{next_run.iso8601}")
         @dependencies.storage.schedule(task, next_run)
       end

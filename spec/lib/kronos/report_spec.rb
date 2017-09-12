@@ -66,7 +66,7 @@ RSpec.describe Kronos::Report do
             stacktrace: ['depth 2', 'depth 1', 'depth 0']
           }
         end
-        it { expect { subject }.to_not raise_error(ArgumentError) }
+        it { expect { subject }.to_not raise_error }
       end
 
       context 'in invalid format' do
