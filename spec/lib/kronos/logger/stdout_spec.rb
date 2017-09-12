@@ -1,6 +1,14 @@
 # frozen_string_literal: true
 
 RSpec.describe Kronos::Logger::Stdout do
+  before do
+    Timecop.freeze(Time.local(1990))
+  end
+
+  after do
+    Timecop.return
+  end
+
   describe '.new' do
     subject { described_class.new }
     it { expect { subject }.to_not raise_error }

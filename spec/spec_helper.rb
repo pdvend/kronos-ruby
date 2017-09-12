@@ -4,6 +4,7 @@ require 'bundler/setup'
 
 require 'simplecov'
 require 'coveralls'
+require 'timecop'
 require 'webmock/rspec'
 
 Coveralls.wear!

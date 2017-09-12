@@ -3,6 +3,14 @@
 RSpec.describe Kronos::Logger::Slack do
   let(:webhook_url) { 'https://fake.slack.url' }
 
+  before do
+    Timecop.freeze
+  end
+
+  after do
+    Timecop.return
+  end
+
   describe '.new' do
     subject { described_class.new(webhook_url) }
 
