@@ -59,7 +59,7 @@ module Kronos
       end
 
       def remove_task_from_schedule(task_id)
-        puts "[Kronos] Task `#{task_id}` was removed from definitions. Removing from schedule too."
+        @dependencies.logger.info("Task `#{task_id}` was removed from definitions. Removing from schedule too.")
         @dependencies.storage.remove(task_id)
       end
 
@@ -73,12 +73,12 @@ module Kronos
 
       def raw_execute_task(task)
         metadata = collect_metadata { task.block.call }
-        puts "[Kronos] Task `#{task.id}` ran successfully."
+        @dependencies.logger.success("Task `#{task.id}` ran successfully.")
         @dependencies.storage.register_report(Kronos::Report.success_from(task, metadata))
       end
 
       def register_task_failure(task, error)
-        puts "[Kronos] Task `#{task.id}` failed."
+        @dependencies.logger.error("Task `#{task.id}` failed.")
         @dependencies.storage.register_report(Kronos::Report.failure_from(task, error))
       end
 
@@ -92,7 +92,7 @@ module Kronos
       def schedule_next_run(task)
         next_run = task.time
         return if next_run < Time.now
-        puts "[Kronos] Scheduling #{task.id} to run #{next_run.iso8601}"
+        @dependencies.logger.info("Scheduling #{task.id} to run #{next_run.iso8601}")
         @dependencies.storage.schedule(task, next_run)
       end
 

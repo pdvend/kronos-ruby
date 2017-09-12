@@ -2,10 +2,11 @@
 
 module Kronos
   class Dependencies
-    attr_reader :storage
+    attr_reader :storage, :logger
 
-    def initialize(storage: nil)
+    def initialize(storage: nil, logger: nil)
       @storage = storage
+      @logger = logger
     end
   end
 end

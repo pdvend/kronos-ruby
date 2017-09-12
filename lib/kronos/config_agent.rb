@@ -23,6 +23,11 @@ module Kronos
       self
     end
 
+    def logger(logger, *config)
+      @instance[:logger] = logger.new(*config)
+      self
+    end
+
     def runner(runner)
       @_runner = runner
       @instance[:runner] = nil
@@ -34,7 +39,8 @@ module Kronos
         raise(Kronos::Exception::NoRunnerRegistered) unless _runner
 
         dependencies = Kronos::Dependencies.new(
-          storage: storage_instance
+          storage: storage_instance,
+          logger: logger_instance
         )
 
         _runner.new(tasks, dependencies)
@@ -43,6 +49,10 @@ module Kronos
 
     def storage_instance
       @instance[:storage] || raise(Kronos::Exception::NoStorageRegistered)
+    end
+
+    def logger_instance
+      @instance[:logger] || raise(Kronos::Exception::NoLoggerRegistered)
     end
 
     private

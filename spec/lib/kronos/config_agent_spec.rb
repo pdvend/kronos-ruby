@@ -74,11 +74,14 @@ RSpec.describe Kronos::ConfigAgent do
       let(:runner_instance) { double('runner_instance') }
       let(:storage) { double('storage') }
       let(:storage_instance) { double('storage_instance') }
+      let(:logger) { double('logger') }
+      let(:logger_instance) { double('logger_instance') }
 
       before do
         allow(runner).to receive(:new).with([], kind_of(Kronos::Dependencies)).and_return(runner_instance)
         allow(storage).to receive(:new).and_return(storage_instance)
-        instance.runner(runner).storage(storage)
+        allow(logger).to receive(:new).and_return(logger_instance)
+        instance.runner(runner).storage(storage).logger(logger)
       end
 
       it { is_expected.to be(runner_instance) }

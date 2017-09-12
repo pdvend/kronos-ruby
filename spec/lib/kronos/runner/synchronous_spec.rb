@@ -3,7 +3,8 @@
 RSpec.describe Kronos::Runner::Synchronous do
   let(:tasks) { [] }
   let(:storage) { double('storage') }
-  let(:dependencies) { Kronos::Dependencies.new(storage: storage) }
+  let(:logger) { double('logger') }
+  let(:dependencies) { Kronos::Dependencies.new(storage: storage, logger: logger) }
 
   describe '.new' do
     subject { described_class.new(tasks, storage) }
@@ -16,7 +17,9 @@ RSpec.describe Kronos::Runner::Synchronous do
     before do
       allow_any_instance_of(described_class).to receive(:loop).and_yield
       allow_any_instance_of(described_class).to receive(:sleep)
-      allow_any_instance_of(described_class).to receive(:puts)
+      allow(logger).to receive(:info)
+      allow(logger).to receive(:error)
+      allow(logger).to receive(:success)
     end
 
     let(:tasks) { [Kronos::Task.new(:task1, timestamp, block)] }
@@ -32,8 +35,17 @@ RSpec.describe Kronos::Runner::Synchronous do
       context 'when task time is in the future' do
         let(:timestamp) { '10 seconds from now' }
 
+        before do
+          allow(storage).to receive(:schedule)
+        end
+
         it 'reschedules the task' do
           expect(storage).to receive(:schedule).with(tasks.first, kind_of(Time))
+          subject
+        end
+
+        it 'alerts logger with info' do
+          expect(logger).to receive(:info)
           subject
         end
       end
@@ -64,10 +76,16 @@ RSpec.describe Kronos::Runner::Synchronous do
       before do
         allow(storage).to receive(:pending?).and_return(true)
         allow(storage).to receive(:resolved_tasks).and_return([:not_registered_id])
+        allow(storage).to receive(:remove)
       end
 
       it 'removes task from schedule' do
         expect(storage).to receive(:remove).with(:not_registered_id)
+        subject
+      end
+
+      it 'alerts logger' do
+        expect(logger).to receive(:info)
         subject
       end
     end
@@ -89,6 +107,11 @@ RSpec.describe Kronos::Runner::Synchronous do
           expect(storage).to receive(:register_report).with(kind_of(Kronos::Report))
           subject
         end
+
+        it 'alerts logger with success' do
+          expect(logger).to receive(:success)
+          subject
+        end
       end
 
       context 'when task execution fails' do
@@ -100,6 +123,11 @@ RSpec.describe Kronos::Runner::Synchronous do
 
         it 'registers failure' do
           expect(storage).to receive(:register_report).with(kind_of(Kronos::Report))
+          subject
+        end
+
+        it 'alerts logger with error' do
+          expect(logger).to receive(:error)
           subject
         end
       end

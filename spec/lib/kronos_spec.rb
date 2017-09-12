@@ -15,12 +15,15 @@ RSpec.describe Kronos do
     let(:runner_instance) { double('runner_instance') }
     let(:storage) { double('storage') }
     let(:storage_instance) { double('storage_instance') }
+    let(:logger) { double('logger') }
+    let(:logger_instance) { double('logger_instance') }
 
     before do
       allow(runner).to receive(:new).and_return(runner_instance)
       allow(storage).to receive(:new).and_return(storage_instance)
+      allow(logger).to receive(:new).and_return(logger_instance)
       allow(runner_instance).to receive(:start)
-      described_class.config.runner(runner).storage(storage)
+      described_class.config.runner(runner).storage(storage).logger(logger)
     end
 
     it { expect { subject }.to_not raise_error }
