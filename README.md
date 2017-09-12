@@ -1,8 +1,8 @@
 # Kronos
+[![Build Status](https://semaphoreci.com/api/v1/pdvend/kronos/branches/master/badge.svg)](https://semaphoreci.com/pdvend/kronos)
+[![Coverage Status](https://coveralls.io/repos/github/pdvend/kronos/badge.svg?branch=master)](https://coveralls.io/github/pdvend/kronos?branch=master)
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/kronos`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+This project allows you to use a scheduler with well defined concepts of runners, storage and tasks. It can work in various storage engines, like memory, redis, disk, database, etc. Also, it supports running in synchronous or asynchronous flows.
 
 ## Installation
 
@@ -14,25 +14,39 @@ gem 'kronos'
 
 And then execute:
 
-    $ bundle
+`$ bundle`
 
 Or install it yourself as:
 
-    $ gem install kronos
+`$ gem install kronos`
+
 
 ## Usage
 
-TODO: Write usage instructions here
+```ruby
+# Define your environment preferences (runner and storage) and register your tasks
+Kronos
+  .config
+  .runner(Kronos::Runner::Synchronous)
+  .storage(Kronos::Storage::InMemory)
+  .register(:say_good_morning, '8am') { puts 'Good Morning, Team!' }
+  .register(:wish_happy_weekend, 'friday, 6pm') { puts 'Happy Weekend, Team!' }
+  # ...
 
-## Development
+# Then start Kronos (This method can be sync or async, acording to the runner you selected)
+Kronos.start
+```
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
-
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+## Developing
+- Clone this repository
+- Run `bin/setup` to install dependencies
+- You can also run `bin/console` to start an iteractive console to test Kronos
+- To install this gem onto your local machine, run `bundle exec rake install`.
+- To release a new version, update `lib/version.rb` and [CHANGELOG.md](/CHANGELOG.md)
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/kronos.
+Bug reports and pull requests are welcome on GitHub at https://github.com/pdvend/kronos.
 
 ## License
 

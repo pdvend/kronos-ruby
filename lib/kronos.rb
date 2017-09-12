@@ -2,6 +2,7 @@
 
 require 'concurrent'
 require 'chronic'
+require 'ostruct'
 
 require 'kronos/config_agent'
 require 'kronos/dependencies'

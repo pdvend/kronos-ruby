@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Kronos
-  class Report < OpenStruct
+  class Report < ::OpenStruct
     STATUSES = { success: 0, failure: 1 }.freeze
 
     class << self

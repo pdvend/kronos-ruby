@@ -8,7 +8,8 @@ require 'kronos/version'
 
 Gem::Specification.new do |spec|
   spec.name          = 'kronos'
-  spec.version       = Kronos::VERSION
+  pre_release        = ENV['SEMAPHORE'] && ENV['PRE_RELEASE']
+  spec.version       = Kronos::VERSION + (pre_release ? ".alpha.#{ENV['SEMAPHORE_DEPLOY_NUMBER']}" : '')
   spec.authors       = ['Gabriel Teles']
   spec.email         = ['gabriel@pdvend.com.br']
 
