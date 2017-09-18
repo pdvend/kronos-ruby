@@ -68,19 +68,20 @@ module Kronos
       def run_task(task)
         raw_execute_task(task)
       rescue ::Exception => error
-        register_task_failure(task, error)
+        register_task_failure(task.id, error)
       end
       # rubocop:enable
 
       def raw_execute_task(task)
         metadata = collect_metadata { task.block.call }
-        @dependencies.logger.success("Task `#{task.id}` ran successfully.")
-        @dependencies.storage.register_report(Kronos::Report.success_from(task, metadata))
+        task_id = task.id
+        @dependencies.logger.success("Task `#{task_id}` ran successfully.")
+        @dependencies.storage.register_report(Kronos::Report.success_from(task_id, metadata))
       end
 
-      def register_task_failure(task, error)
-        @dependencies.logger.error("Task `#{task.id}` failed.")
-        @dependencies.storage.register_report(Kronos::Report.failure_from(task, error))
+      def register_task_failure(task_id, error)
+        @dependencies.logger.error("Task `#{task_id}` failed.")
+        @dependencies.storage.register_report(Kronos::Report.failure_from(task_id, error))
       end
 
       def collect_metadata(&block)
@@ -97,8 +98,9 @@ module Kronos
       end
 
       def schedule(task, next_run)
-        @dependencies.logger.info("Scheduling `#{task.id}` to run `#{next_run.iso8601}`")
-        @dependencies.storage.schedule(task, next_run)
+        task_id = task.id
+        @dependencies.logger.info("Scheduling `#{task_id}` to run `#{next_run.iso8601}`")
+        @dependencies.storage.schedule(Kronos::ScheduledTask.new(task_id, next_run))
       end
 
       def find_task(task_id)

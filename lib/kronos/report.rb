@@ -5,18 +5,18 @@ module Kronos
     STATUSES = { success: 0, failure: 1 }.freeze
 
     class << self
-      def success_from(task, metadata, timestamp = Time.now)
+      def success_from(task_id, metadata, timestamp = Time.now)
         new(
-          task: check_task(task),
+          task_id: check_task_id(task_id),
           status: Kronos::Report::STATUSES[:success],
           timestamp: check_timestamp(timestamp),
           metadata: check_metadata(metadata)
         )
       end
 
-      def failure_from(task, exception, timestamp = Time.now)
+      def failure_from(task_id, exception, timestamp = Time.now)
         new(
-          task: check_task(task),
+          task_id: check_task_id(task_id),
           status: Kronos::Report::STATUSES[:failure],
           timestamp: check_timestamp(timestamp),
           exception: check_exception(exception)
@@ -31,8 +31,8 @@ module Kronos
         timestamp.is_a?(Time) ? timestamp : raise_invalid_argument('timestamp', timestamp, Time)
       end
 
-      def check_task(task)
-        task.is_a?(Kronos::Task) ? task : raise_invalid_argument('task', task, Kronos::Task)
+      def check_task_id(task)
+        task.is_a?(Symbol) ? task : raise_invalid_argument('Task ID', task, Symbol)
       end
 
       def check_metadata(metadata)

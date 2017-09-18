@@ -40,7 +40,7 @@ RSpec.describe Kronos::Runner::Synchronous do
         end
 
         it 'reschedules the task' do
-          expect(storage).to receive(:schedule).with(tasks.first, kind_of(Time))
+          expect(storage).to receive(:schedule).with(kind_of(Kronos::ScheduledTask))
           subject
         end
 

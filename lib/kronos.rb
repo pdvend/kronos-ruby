@@ -2,6 +2,7 @@
 
 require 'concurrent'
 require 'chronic'
+require 'erb'
 require 'ostruct'
 
 require 'kronos/config_agent'
@@ -10,9 +11,11 @@ require 'kronos/exception'
 require 'kronos/logger'
 require 'kronos/report'
 require 'kronos/runner'
+require 'kronos/scheduled_task'
 require 'kronos/storage'
 require 'kronos/task'
 require 'kronos/version'
+require 'kronos/web'
 
 module Kronos
   @config_agent = Kronos::ConfigAgent.new

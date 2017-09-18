@@ -4,49 +4,49 @@ module Kronos
   module Storage
     class InMemory
       attr_reader :reports
+      attr_reader :scheduled_tasks
 
       def initialize
-        @tasks = []
+        @scheduled_tasks = []
         @reports = []
       end
 
-      def schedule(task, next_run)
-        remove(task.id)
-        @tasks.push([task, next_run])
+      def schedule(scheduled_task)
+        remove(scheduled_task.task_id)
+        @scheduled_tasks.push(scheduled_task)
       end
 
       def register_report(report)
-        remove_reports_for(report.task.id)
+        remove_reports_for(report.task_id)
         @reports << report
       end
 
       def pending?(task)
         time = Time.now
 
-        @tasks
+        @scheduled_tasks
           .lazy
-          .select { |(_task, next_run)| next_run > time }
-          .map(&:first)
-          .map(&:id)
+          .select { |scheduled_task| scheduled_task.next_run > time }
+          .map(&:task_id)
           .include?(task.id)
       end
 
       def resolved_tasks
         time = Time.now
 
-        @tasks
+        @scheduled_tasks
           .lazy
-          .select { |(_task, next_run)| next_run <= time }
-          .map(&:first)
-          .map(&:id)
+          .select { |scheduled_task| scheduled_task.next_run <= time }
+          .map(&:task_id)
+          .to_a
       end
 
       def remove(task_id)
-        @tasks.reject! { |(task, _next_run)| task.id == task_id }
+        @scheduled_tasks.reject! { |scheduled_task| scheduled_task.task_id == task_id }
       end
 
       def remove_reports_for(id)
-        @reports.reject! { |report| report.task.id == id }
+        @reports.reject! { |report| report.task_id == id }
       end
     end
   end

@@ -7,7 +7,8 @@ RSpec.describe Kronos::Storage::InMemory do
   end
 
   describe '#schedule' do
-    subject { instance.schedule(task, next_run) }
+    subject { instance.schedule(scheduled_task) }
+    let(:scheduled_task) { Kronos::ScheduledTask.new(task.id, next_run) }
     let(:instance) { described_class.new }
     let(:task) { Kronos::Task.new(:task, '1 day from now', ->() {}) }
     let(:next_run) { Time.now + 86_400 }
@@ -26,7 +27,7 @@ RSpec.describe Kronos::Storage::InMemory do
 
     context 'when task is scheduled' do
       before do
-        instance.schedule(task, Time.now - 1)
+        instance.schedule(Kronos::ScheduledTask.new(task.id, Time.now - 1))
       end
 
       it { expect { subject }.to_not raise_error }
@@ -45,7 +46,7 @@ RSpec.describe Kronos::Storage::InMemory do
     subject { instance.register_report(report) }
     let(:instance) { described_class.new }
     let(:task) { Kronos::Task.new(:task, '1 day from now', ->() {}) }
-    let(:report) { Kronos::Report.success_from(task, foo: 'bar') }
+    let(:report) { Kronos::Report.success_from(task.id, foo: 'bar') }
 
     context 'when task has no registered report' do
       it { expect { subject }.to_not raise_error }
@@ -55,7 +56,7 @@ RSpec.describe Kronos::Storage::InMemory do
     end
 
     context 'when task already has a registered report' do
-      let(:old_report) { Kronos::Report.success_from(task, foo: 'bar') }
+      let(:old_report) { Kronos::Report.success_from(task.id, foo: 'bar') }
 
       before do
         instance.register_report(old_report)
@@ -78,7 +79,7 @@ RSpec.describe Kronos::Storage::InMemory do
     end
 
     context 'when task is registered' do
-      before { instance.schedule(task, next_run) }
+      before { instance.schedule(Kronos::ScheduledTask.new(task.id, next_run)) }
 
       context 'when task is resolved' do
         let(:next_run) { Time.now - 86_400 }
@@ -100,14 +101,14 @@ RSpec.describe Kronos::Storage::InMemory do
     let(:task2) { Kronos::Task.new(:task2, '1 day from now', ->() {}) }
 
     context 'when there is no task registered' do
-      it { is_expected.to be_a(Enumerator) }
+      it { is_expected.to be_a(Enumerable) }
       it { expect(subject.to_a).to be_empty }
     end
 
     context 'when there are registered tasks' do
       before do
-        instance.schedule(task1, Time.now - 86_400)
-        instance.schedule(task2, Time.now + 86_400)
+        instance.schedule(Kronos::ScheduledTask.new(task1.id, Time.now - 86_400))
+        instance.schedule(Kronos::ScheduledTask.new(task2.id, Time.now + 86_400))
       end
 
       it 'returns only resolved task ids' do
@@ -125,7 +126,7 @@ RSpec.describe Kronos::Storage::InMemory do
     it { expect { subject }.to_not raise_error }
 
     context 'when task is registered' do
-      before { instance.schedule(task, Time.now) }
+      before { instance.schedule(Kronos::ScheduledTask.new(task.id, Time.now)) }
 
       it 'removes from both resolved and pending tasks' do
         subject

@@ -1,23 +1,22 @@
 # frozen_string_literal: true
 
 RSpec.describe Kronos::Report do
-  let(:task) { Kronos::Task.new(:task, 'now', ->() {}) }
-
   describe '.success_from' do
-    subject { described_class.success_from(task, metadata, timestamp) }
+    subject { described_class.success_from(task_id, metadata, timestamp) }
 
+    let(:task_id) { :task }
     let(:metadata) { { foo: 'bar' } }
     let(:timestamp) { Time.now }
 
     it { expect { subject }.to_not raise_error }
     it { is_expected.to be_success }
-    it { is_expected.to respond_to(:task) }
+    it { is_expected.to respond_to(:task_id) }
     it { is_expected.to respond_to(:timestamp) }
     it { is_expected.to respond_to(:metadata) }
     it { is_expected.to_not respond_to(:exception) }
 
-    context 'when task is invalid' do
-      let(:task) { Object.new }
+    context 'when task id is invalid' do
+      let(:task_id) { Object.new }
       it { expect { subject }.to raise_error(ArgumentError) }
     end
 
@@ -40,20 +39,21 @@ RSpec.describe Kronos::Report do
   end
 
   describe '.failure_from' do
-    subject { described_class.failure_from(task, exception, timestamp) }
+    subject { described_class.failure_from(task_id, exception, timestamp) }
 
+    let(:task_id) { :task }
     let(:exception) { RuntimeError.new }
     let(:timestamp) { Time.now }
 
     it { expect { subject }.to_not raise_error }
     it { is_expected.to be_failure }
-    it { is_expected.to respond_to(:task) }
+    it { is_expected.to respond_to(:task_id) }
     it { is_expected.to respond_to(:timestamp) }
     it { is_expected.to respond_to(:exception) }
     it { is_expected.to_not respond_to(:metadata) }
 
-    context 'when task is invalid' do
-      let(:task) { Object.new }
+    context 'when task id is invalid' do
+      let(:task_id) { Object.new }
       it { expect { subject }.to raise_error(ArgumentError) }
     end
 
