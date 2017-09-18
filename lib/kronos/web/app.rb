@@ -10,11 +10,8 @@ module Kronos
       end
 
       def call(_env)
+        rendered_template = @erb.result(binding)
         [200, {}, [rendered_template]]
-      end
-
-      def rendered_template
-        @erb.result(binding)
       end
     end.new
   end
