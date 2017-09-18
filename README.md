@@ -38,6 +38,12 @@ Kronos
 Kronos.start
 ```
 
+### Web dashboard
+To view Krono's web dashboard, simply mount it into your Rack stack:
+```ruby
+mount Kronos::Web::App, at: '/kronos-dashboard'
+```
+
 ## Developing
 - Clone this repository
 - Run `bin/setup` to install dependencies
