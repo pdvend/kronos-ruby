@@ -13,7 +13,7 @@ module Kronos
 
     def time
       Chronic.parse(@timestamp) || raise_unrecognized_time_format
-    rescue
+    rescue StandardError
       raise_unrecognized_time_format
     end
 

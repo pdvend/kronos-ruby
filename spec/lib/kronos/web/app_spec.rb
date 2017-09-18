@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-RSpec.describe Kronos::Web::App do
+RSpec.describe 'Kronos::Web::App' do
   describe '.call' do
-    subject { described_class.call(nil) }
+    subject { Kronos::Web::App.call(nil) }
 
     let(:runner) { double('runner') }
     let(:runner_instance) { double('runner_instance') }
