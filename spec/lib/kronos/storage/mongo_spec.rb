@@ -96,7 +96,7 @@ RSpec.describe Kronos::Storage::Mongo do
   end
 
   describe '#reports' do
-    subject { described_class.scheduled_tasks }
+    subject { described_class.reports }
 
     it do
       expect(report_model).to receive(:all)
