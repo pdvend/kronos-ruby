@@ -3,6 +3,7 @@
 ## CHANGELOG
 
 ### Unreleased
+- [Added] Mongo Storage
 - [Added] Logger structure (Stdout and Slack)
 - [Added] Storage structure (InMemory)
 - [Added] Runner structure (Synchronous/Asynchronous)
