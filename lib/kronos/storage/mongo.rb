@@ -24,7 +24,7 @@ module Kronos
         def resolved_tasks
           # Returns a list of task ids that where resolved (where scheduled_task.next_run <= Time.now)
           tasks = []
-          SHEDULED_TASK_MODEL.where(:next_run.lte => Time.now + 1.day).each do |scheduled_task_model|
+          SHEDULED_TASK_MODEL.where(:next_run.lte => Time.now).each do |scheduled_task_model|
             tasks << Kronos::ScheduledTask.new(scheduled_task_model.id, scheduled_task_model.next_run)
           end
           tasks
