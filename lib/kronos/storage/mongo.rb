@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require 'kronos/storage/model/scheduled_task_model'
-require 'kronos/storage/model/report_model'
+require 'kronos/storage/mongo/model/scheduled_task_model'
+require 'kronos/storage/mongo/model/report_model'
 
 module Kronos
   module Storage
-    class Mongo
+    module Mongo
       SHEDULED_TASK_MODEL = Model::ScheduledTaskModel
       REPORT_MODEL = Model::ScheduledTaskModel
 
