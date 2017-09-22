@@ -23,6 +23,8 @@ module Kronos
         )
       end
 
+      private :new
+
       private
 
       def check_timestamp(timestamp)
