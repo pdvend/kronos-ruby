@@ -104,9 +104,36 @@ RSpec.describe Kronos::Storage::MongoDb do
   describe '#reports' do
     subject { described_class.new.reports }
 
-    it do
+    let(:report) do
+      double(:report,
+             task_id: task_id,
+             metadata: metadata,
+             exception: exception,
+             status: status,
+             timestamp: timestamp)
+    end
+    let(:task_id) { :task_id }
+    let(:metadata) { {} }
+    let(:exception) { nil }
+    let(:status) { 0 }
+    let(:timestamp) { Time.now }
+
+    before do
+      allow(report_model).to receive(:all).and_return([report])
+    end
+
+    it 'get all ReportModel' do
       expect(report_model).to receive(:all)
       subject
+    end
+
+    it 'return correct Report' do
+      expect(subject.first).to be_a(Kronos::Report)
+      expect(subject.first.task_id).to eq(task_id)
+      expect(subject.first.metadata).to eq(metadata)
+      expect(subject.first.exception).to eq(exception)
+      expect(subject.first.status).to eq(status)
+      expect(subject.first.timestamp).to eq(timestamp)
     end
   end
 
@@ -117,7 +144,9 @@ RSpec.describe Kronos::Storage::MongoDb do
     let(:create_params) do
       {
         task_id: report.task_id,
+        status: report.status,
         metadata: report.metadata,
+        exception: nil,
         timestamp: report.timestamp
       }
     end

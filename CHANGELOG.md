@@ -5,6 +5,9 @@
 ### Unreleased
 - [Fixed] Docs
 
+### 0.2.1 [2017-09-22]
+- [Added] Fields to ReportModel
+
 ### 0.2.0 [2017-09-22]
 - [Added] Mongo Storage
 
