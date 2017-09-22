@@ -4,6 +4,9 @@
 
 ### Unreleased
 
+### 0.2.0 [2017-09-22]
+- [Added] Mongo Storage
+
 ### 0.1.1 [2017-09-21]
 - [Added] Logger structure (Stdout and Slack)
 - [Added] Storage structure (InMemory)

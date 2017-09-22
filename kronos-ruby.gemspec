@@ -25,6 +25,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'concurrent-ruby'
   spec.add_dependency 'chronic'
+  spec.add_dependency 'mongoid'
   spec.add_development_dependency 'bundler'
   spec.add_development_dependency 'coveralls'
   spec.add_development_dependency 'fasterer'
