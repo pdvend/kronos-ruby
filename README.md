@@ -1,6 +1,9 @@
 # Kronos
 [![Build Status](https://semaphoreci.com/api/v1/pdvend/kronos/branches/master/badge.svg)](https://semaphoreci.com/pdvend/kronos)
 [![Coverage Status](https://coveralls.io/repos/github/pdvend/kronos/badge.svg?branch=master)](https://coveralls.io/github/pdvend/kronos?branch=master)
+[![Gem Version](https://badge.fury.io/rb/kronos-ruby.svg)](https://badge.fury.io/rb/kronos-ruby)
+[![Dependency Status](https://gemnasium.com/badges/github.com/pdvend/kronos.svg)](https://gemnasium.com/github.com/pdvend/kronos)
+[![Code Climate](https://codeclimate.com/github/pdvend/kronos/badges/gpa.svg)](https://codeclimate.com/github/pdvend/kronos)
 
 This project allows you to use a scheduler with well defined concepts of runners, storage and tasks. It can work in various storage engines, like memory, redis, disk, database, etc. Also, it supports running in synchronous or asynchronous flows.
 
