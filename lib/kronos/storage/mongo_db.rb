@@ -23,11 +23,11 @@ module Kronos
 
       def resolved_tasks
         # Returns a list of task ids that where resolved (where scheduled_task.next_run <= Time.now)
-        tasks = []
-        SHEDULED_TASK_MODEL.where(:next_run.lte => Time.now).each do |scheduled_task_model|
-          tasks << Kronos::ScheduledTask.new(scheduled_task_model.id, scheduled_task_model.next_run)
+        task_ids = []
+        SHEDULED_TASK_MODEL.where(:next_run.lte => Time.now).each do |scheduled_task|
+          task_ids << scheduled_task.task_id
         end
-        tasks
+        task_ids
       end
 
       def remove(task_id)
@@ -53,7 +53,8 @@ module Kronos
 
       def pending?(task)
         # Checks if task has any pending scheduled task (where scheduled_task.next_run > Time.now)
-        SHEDULED_TASK_MODEL.where(task_id: task.id).first.next_run > Time.now
+        next_run = SHEDULED_TASK_MODEL.where(task_id: task.id).first.try(:next_run)
+        next_run && next_run > Time.now
       end
 
       private

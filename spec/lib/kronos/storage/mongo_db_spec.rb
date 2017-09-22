@@ -42,7 +42,7 @@ RSpec.describe Kronos::Storage::MongoDb do
   end
 
   describe '#resolved_tasks' do
-    let(:scheduled_task) { double('scheduled_task_model', id: id, next_run: next_run) }
+    let(:scheduled_task) { double('scheduled_task_model', task_id: id, next_run: next_run) }
     let(:id) { :task_id }
     let(:next_run) { Time.now - 1.second }
     let(:where_response) { [scheduled_task] }
@@ -54,9 +54,7 @@ RSpec.describe Kronos::Storage::MongoDb do
 
     context 'when any result' do
       it { is_expected.to be_a(Array) }
-      it { expect(subject.first).to be_a(Kronos::ScheduledTask) }
-      it { expect(subject.first.task_id).to eq(id) }
-      it { expect(subject.first.next_run).to eq(next_run) }
+      it { expect(subject).to eq([id]) }
     end
 
     context 'when empty result' do
