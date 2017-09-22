@@ -12,6 +12,8 @@ module Kronos
 
           field :task_id, type: Symbol
           field :metadata, type: Hash
+          field :exception, type: Hash
+          field :status, type: Integer
           field :timestamp, type: Time
         end
       end

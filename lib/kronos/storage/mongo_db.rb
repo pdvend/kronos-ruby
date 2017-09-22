@@ -33,7 +33,7 @@ module Kronos
 
       def reports
         # Returns all previous Kronos::Report that were saved using #register_report
-        REPORT_MODEL.all
+        REPORT_MODEL.all.map(&method(:mount_report))
       end
 
       def register_report(report)
@@ -55,6 +55,10 @@ module Kronos
 
       private
 
+      def mount_report(report_model)
+        Kronos::Report.new(report_params(report_model))
+      end
+
       def scheduled_task_params(scheduled_task)
         {
           task_id: scheduled_task.task_id,
@@ -65,7 +69,9 @@ module Kronos
       def report_params(report)
         {
           task_id: report.task_id,
+          status: report.status,
           metadata: report.metadata,
+          exception: report.exception,
           timestamp: report.timestamp
         }
       end
