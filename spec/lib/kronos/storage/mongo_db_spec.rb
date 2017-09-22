@@ -42,17 +42,17 @@ RSpec.describe Kronos::Storage::MongoDb do
   end
 
   describe '#resolved_tasks' do
-    let(:scheduled_task) { double('scheduled_task_model', task_id: id, next_run: next_run) }
+    let(:scheduled_task) { double('scheduled_task_model', task_id: id) }
     let(:id) { :task_id }
-    let(:next_run) { Time.now - 1.second }
-    let(:where_response) { [scheduled_task] }
     subject { described_class.new.resolved_tasks }
 
     before do
+      allow(scheduled_task).to receive(:[]).with(:task_id).and_return(id)
       allow(scheduled_task_model).to receive(:where).and_return(where_response)
     end
 
     context 'when any result' do
+      let(:where_response) { [scheduled_task] }
       it { is_expected.to be_a(Array) }
       it { expect(subject).to eq([id]) }
     end

@@ -23,11 +23,7 @@ module Kronos
 
       def resolved_tasks
         # Returns a list of task ids that where resolved (where scheduled_task.next_run <= Time.now)
-        task_ids = []
-        SHEDULED_TASK_MODEL.where(:next_run.lte => Time.now).each do |scheduled_task|
-          task_ids << scheduled_task.task_id
-        end
-        task_ids
+        SHEDULED_TASK_MODEL.where(:next_run.lte => Time.now).pluck(:task_id)
       end
 
       def remove(task_id)
