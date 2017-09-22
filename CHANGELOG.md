@@ -4,7 +4,7 @@
 
 ### Unreleased
 
-### 0.1.0 [2017-09-21]
+### 0.1.1 [2017-09-21]
 - [Added] Logger structure (Stdout and Slack)
 - [Added] Storage structure (InMemory)
 - [Added] Runner structure (Synchronous/Asynchronous)
