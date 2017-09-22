@@ -19,14 +19,17 @@ RSpec.describe Kronos::Storage::MongoDb do
     let(:block) { ->(*) {} }
     let(:scheduled_task) { Kronos::ScheduledTask.new(id, next_run) }
     let(:where_response) { [scheduled_task] }
+    let(:next_run) { Time.now + 1.second }
+    let(:exists) { true }
+
     subject { described_class.new.pending?(task) }
 
     before do
+      allow(where_response).to receive(:exists?).and_return(exists)
       allow(scheduled_task_model).to receive(:where).with(task_id: id).and_return(where_response)
     end
 
     context 'when next run is after now' do
-      let(:next_run) { Time.now + 1.second }
       it { is_expected.to be_truthy }
     end
 
@@ -37,6 +40,11 @@ RSpec.describe Kronos::Storage::MongoDb do
 
     context 'when next run is before now' do
       let(:next_run) { Time.now - 1.second }
+      it { is_expected.to be_falsey }
+    end
+
+    context 'when not exists' do
+      let(:exists) { false }
       it { is_expected.to be_falsey }
     end
   end
