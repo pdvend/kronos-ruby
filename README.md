@@ -56,7 +56,7 @@ mount Kronos::Web::App, at: '/kronos-dashboard'
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/pdvend/kronos.
+Bug reports and pull requests are welcome on GitHub at https://github.com/pdvend/kronos-ruby.
 
 ## License
 
