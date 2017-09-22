@@ -3,6 +3,7 @@
 ## CHANGELOG
 
 ### Unreleased
+- [Added] Mongo Storage
 
 ### 0.1.1 [2017-09-21]
 - [Added] Logger structure (Stdout and Slack)

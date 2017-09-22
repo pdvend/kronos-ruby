@@ -6,3 +6,4 @@ module Kronos
 end
 
 require 'kronos/storage/in_memory'
+require 'kronos/storage/mongo_db'
