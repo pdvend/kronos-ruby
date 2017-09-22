@@ -49,8 +49,8 @@ module Kronos
 
       def pending?(task)
         # Checks if task has any pending scheduled task (where scheduled_task.next_run > Time.now)
-        next_run = SHEDULED_TASK_MODEL.where(task_id: task.id).first.try(:next_run)
-        next_run && next_run > Time.now
+        next_run = SHEDULED_TASK_MODEL.where(task_id: task.id).first.next_run
+        next_run > Time.now
       end
 
       private
