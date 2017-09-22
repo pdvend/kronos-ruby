@@ -19,14 +19,17 @@ RSpec.describe Kronos::Storage::MongoDb do
     let(:block) { ->(*) {} }
     let(:scheduled_task) { Kronos::ScheduledTask.new(id, next_run) }
     let(:where_response) { [scheduled_task] }
+    let(:next_run) { Time.now + 1.second }
+    let(:exists) { true }
+
     subject { described_class.new.pending?(task) }
 
     before do
+      allow(where_response).to receive(:exists?).and_return(exists)
       allow(scheduled_task_model).to receive(:where).with(task_id: id).and_return(where_response)
     end
 
     context 'when next run is after now' do
-      let(:next_run) { Time.now + 1.second }
       it { is_expected.to be_truthy }
     end
 
@@ -39,24 +42,27 @@ RSpec.describe Kronos::Storage::MongoDb do
       let(:next_run) { Time.now - 1.second }
       it { is_expected.to be_falsey }
     end
+
+    context 'when not exists' do
+      let(:exists) { false }
+      it { is_expected.to be_falsey }
+    end
   end
 
   describe '#resolved_tasks' do
-    let(:scheduled_task) { double('scheduled_task_model', id: id, next_run: next_run) }
+    let(:scheduled_task) { double('scheduled_task_model', task_id: id) }
     let(:id) { :task_id }
-    let(:next_run) { Time.now - 1.second }
-    let(:where_response) { [scheduled_task] }
     subject { described_class.new.resolved_tasks }
 
     before do
+      allow(scheduled_task).to receive(:[]).with(:task_id).and_return(id)
       allow(scheduled_task_model).to receive(:where).and_return(where_response)
     end
 
     context 'when any result' do
+      let(:where_response) { [scheduled_task] }
       it { is_expected.to be_a(Array) }
-      it { expect(subject.first).to be_a(Kronos::ScheduledTask) }
-      it { expect(subject.first.task_id).to eq(id) }
-      it { expect(subject.first.next_run).to eq(next_run) }
+      it { expect(subject).to eq([id]) }
     end
 
     context 'when empty result' do
