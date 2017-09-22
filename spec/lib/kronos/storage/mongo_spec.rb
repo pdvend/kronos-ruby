@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-RSpec.describe Kronos::Storage::Mongo do
+RSpec.describe Kronos::Storage::MongoDb do
   let(:scheduled_task_model) { described_class::SHEDULED_TASK_MODEL }
   let(:report_model) { described_class::REPORT_MODEL }
 
   describe '#scheduled_tasks' do
-    subject { described_class.scheduled_tasks }
+    subject { described_class.new.scheduled_tasks }
 
     it do
       expect(scheduled_task_model).to receive(:all)
@@ -19,7 +19,7 @@ RSpec.describe Kronos::Storage::Mongo do
     let(:block) { ->(*) {} }
     let(:scheduled_task) { Kronos::ScheduledTask.new(id, next_run) }
     let(:where_response) { [scheduled_task] }
-    subject { described_class.pending?(task) }
+    subject { described_class.new.pending?(task) }
 
     before do
       allow(scheduled_task_model).to receive(:where).with(task_id: id).and_return(where_response)
@@ -46,7 +46,7 @@ RSpec.describe Kronos::Storage::Mongo do
     let(:id) { :task_id }
     let(:next_run) { Time.now - 1.second }
     let(:where_response) { [scheduled_task] }
-    subject { described_class.resolved_tasks }
+    subject { described_class.new.resolved_tasks }
 
     before do
       allow(scheduled_task_model).to receive(:where).and_return(where_response)
@@ -70,7 +70,7 @@ RSpec.describe Kronos::Storage::Mongo do
     let(:task_id) { :some_id }
     let(:where_response) { double(:where_response) }
 
-    subject { described_class.remove(task_id) }
+    subject { described_class.new.remove(task_id) }
 
     it do
       expect(scheduled_task_model).to receive(:where).with(task_id: task_id).and_return(where_response)
@@ -85,7 +85,7 @@ RSpec.describe Kronos::Storage::Mongo do
     let(:next_run) { Time.now }
     let(:where_response) { double(:where_response) }
 
-    subject { described_class.schedule(scheduled_task) }
+    subject { described_class.new.schedule(scheduled_task) }
 
     it do
       expect(scheduled_task_model).to receive(:where).with(task_id: task_id).and_return(where_response)
@@ -96,7 +96,7 @@ RSpec.describe Kronos::Storage::Mongo do
   end
 
   describe '#reports' do
-    subject { described_class.reports }
+    subject { described_class.new.reports }
 
     it do
       expect(report_model).to receive(:all)
@@ -116,12 +116,12 @@ RSpec.describe Kronos::Storage::Mongo do
       }
     end
 
-    subject { described_class.register_report(report) }
+    subject { described_class.new.register_report(report) }
 
     it do
-      expect(scheduled_task_model).to receive(:where).with(task_id: task_id).and_return(where_response)
+      expect(report_model).to receive(:where).with(task_id: task_id).and_return(where_response)
       expect(where_response).to receive(:destroy_all)
-      expect(scheduled_task_model).to receive(:create).with(create_params)
+      expect(report_model).to receive(:create).with(create_params)
       subject
     end
   end
@@ -129,7 +129,7 @@ RSpec.describe Kronos::Storage::Mongo do
   describe '#remove_reports_for' do
     let(:task_id) { :some_id }
     let(:where_response) { double(:where_response) }
-    subject { described_class.remove_reports_for(task_id) }
+    subject { described_class.new.remove_reports_for(task_id) }
 
     it do
       expect(report_model).to receive(:where).with(task_id: task_id).and_return(where_response)
