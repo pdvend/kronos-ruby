@@ -9,7 +9,7 @@ This project allows you to use a scheduler with well defined concepts of runners
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'kronos'
+gem 'kronos-ruby'
 ```
 
 And then execute:
@@ -18,7 +18,7 @@ And then execute:
 
 Or install it yourself as:
 
-`$ gem install kronos`
+`$ gem install kronos-ruby`
 
 
 ## Usage
