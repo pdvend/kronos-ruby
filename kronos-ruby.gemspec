@@ -13,7 +13,7 @@ Gem::Specification.new do |spec|
   spec.email         = ['gabriel@pdvend.com.br']
 
   spec.summary       = 'Persistent cron jobs manager'
-  spec.homepage      = 'https://github.com/pdvend/kronos'
+  spec.homepage      = 'https://github.com/pdvend/kronos-ruby'
   spec.license       = 'MIT'
 
   spec.files         = `git ls-files -z`.split("\x0").reject do |f|
