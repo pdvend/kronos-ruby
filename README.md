@@ -12,7 +12,7 @@ This project allows you to use a scheduler with well defined concepts of runners
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'kronos-ruby'
+gem 'kronos-ruby', require: ['kronos']
 ```
 
 And then execute:
@@ -45,6 +45,15 @@ Kronos.start
 To view Krono's web dashboard, simply mount it into your Rack stack:
 ```ruby
 mount Kronos::Web::App, at: '/kronos-dashboard'
+```
+
+If you want to protect Kronos dashboard, try using `Rack::Auth::Basic`:
+```ruby
+protected_kronos = Rack::Auth::Basic.new(Kronos::Web::App) do |username, password|
+  # Check if username/password tuple is valid
+end
+
+mount protected_kronos, at: '/kronos-dashboard'
 ```
 
 ## Developing
