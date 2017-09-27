@@ -57,9 +57,9 @@ module Kronos
 
       def mount_report(report_model)
         case report_model.status
-        when 0
+        when Kronos::Report::STATUSES[:success]
           mount_success_report(report_model)
-        when 1
+        when Kronos::Report::STATUSES[:failure]
           mount_failure_report(report_model)
         end
       end
