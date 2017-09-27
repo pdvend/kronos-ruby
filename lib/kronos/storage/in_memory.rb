@@ -9,6 +9,7 @@ module Kronos
       def initialize
         @scheduled_tasks = []
         @reports = []
+        @locks = {}
       end
 
       def schedule(scheduled_task)
@@ -47,6 +48,24 @@ module Kronos
 
       def remove_reports_for(id)
         @reports.reject! { |report| report.task_id == id }
+      end
+
+      def locked_task?(task_id)
+        @locks.key?(task_id)
+      end
+
+      def lock_task(task_id)
+        SecureRandom.uuid.tap do |lock_id|
+          @locks[task_id] = lock_id
+        end
+      end
+
+      def check_lock(task_id, lock_id)
+        @locks[task_id] == lock_id
+      end
+
+      def release_lock(task_id)
+        @locks.delete(task_id)
       end
     end
   end

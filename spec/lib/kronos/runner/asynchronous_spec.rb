@@ -2,15 +2,17 @@
 
 RSpec.describe Kronos::Runner::Asynchronous do
   let(:tasks) { [] }
-  let(:storage) { double('storage') }
+  let(:dependencies) { double('dependencies') }
+
+  before { allow(dependencies).to receive(:storage) }
 
   describe '.new' do
-    subject { described_class.new(tasks, storage) }
+    subject { described_class.new(tasks, dependencies) }
     it { expect { subject }.to_not raise_error }
   end
 
   describe '#start' do
-    subject { described_class.new(tasks, storage).start }
+    subject { described_class.new(tasks, dependencies).start }
     let(:async_executor) { double('async_executor') }
 
     before do

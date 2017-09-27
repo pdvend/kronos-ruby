@@ -140,4 +140,70 @@ RSpec.describe Kronos::Storage::InMemory do
       end
     end
   end
+
+  describe '#locked_task?' do
+    subject { instance.locked_task?(task_id) }
+    let(:instance) { described_class.new }
+    let(:task_id) { :task }
+
+    context 'when the task was locked before' do
+      before { instance.lock_task(task_id) }
+      it { is_expected.to be_truthy }
+    end
+
+    context 'when the task was not locked before' do
+      it { is_expected.to be_falsey }
+    end
+  end
+
+  describe '#lock_task' do
+    subject { instance.lock_task(task_id) }
+    let(:instance) { described_class.new }
+    let(:task_id) { :task }
+
+    it { is_expected.to be_a(String) }
+    it { is_expected.to_not be_empty }
+  end
+
+  describe '#check_lock' do
+    subject { instance.check_lock(task_id, lock_id) }
+    let(:instance) { described_class.new }
+    let(:task_id) { :task }
+
+    context 'when the lock is not registered' do
+      let(:lock_id) { SecureRandom.uuid }
+      it { is_expected.to be_falsey }
+    end
+
+    context 'when the lock has the specified lock value' do
+      let(:lock_id) { instance.lock_task(task_id) }
+      it { is_expected.to be_truthy }
+    end
+
+    context 'when the lock has not the specified lock value' do
+      before { instance.lock_task(task_id) }
+      let(:lock_id) { SecureRandom.uuid }
+      it { is_expected.to be_falsey }
+    end
+  end
+
+  describe '#release_lock' do
+    subject { instance.release_lock(task_id) }
+    let(:instance) { described_class.new }
+    let(:task_id) { :task }
+
+    context 'when the lock is registered' do
+      before { instance.lock_task(task_id) }
+
+      it 'unregisters the lock' do
+        expect { subject }.to change { instance.locked_task?(task_id) }.from(true).to(false)
+      end
+    end
+
+    context 'when the lock is not registered' do
+      it 'does nothing' do
+        expect { subject }.to_not(change { instance.locked_task?(task_id) })
+      end
+    end
+  end
 end

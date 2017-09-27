@@ -24,6 +24,7 @@ module Kronos
       def initialize(tasks, dependencies)
         @tasks = tasks
         @dependencies = dependencies
+        @lock_manager = LockManager.new(dependencies.storage)
       end
 
       def start
@@ -66,9 +67,10 @@ module Kronos
 
       # rubocop:disable RescueException
       def run_task(task)
-        raw_execute_task(task)
+        task_id = task.id
+        @lock_manager.lock_and_execute(task_id) { raw_execute_task(task) }
       rescue ::Exception => error
-        register_task_failure(task.id, error)
+        register_task_failure(task_id, error)
       end
       # rubocop:enable
 
@@ -109,3 +111,5 @@ module Kronos
     end
   end
 end
+
+require 'kronos/runner/synchronous/lock_manager'

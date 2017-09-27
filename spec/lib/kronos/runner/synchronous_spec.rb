@@ -7,7 +7,8 @@ RSpec.describe Kronos::Runner::Synchronous do
   let(:dependencies) { Kronos::Dependencies.new(storage: storage, logger: logger) }
 
   describe '.new' do
-    subject { described_class.new(tasks, storage) }
+    subject { described_class.new(tasks, dependencies) }
+    before { allow(dependencies).to receive(:storage) }
     it { expect { subject }.to_not raise_error }
   end
 
@@ -109,6 +110,9 @@ RSpec.describe Kronos::Runner::Synchronous do
         allow(storage).to receive(:resolved_tasks).and_return(tasks.map(&:id))
         allow(storage).to receive(:register_report)
         allow(storage).to receive(:remove)
+        allow_any_instance_of(Kronos::Runner::Synchronous::LockManager)
+          .to receive(:lock_and_execute)
+          .and_yield
       end
 
       it 'executes the task block' do

@@ -4,6 +4,9 @@
 
 ### Unreleased
 
+### 0.3.0 [2017-09-27]
+- [Added] Distributed lock capabilities
+
 ### 0.2.1 [2017-09-22]
 - [Added] Fields to ReportModel
 - [Fixed] Update Docs
