@@ -4,6 +4,7 @@ require 'concurrent'
 require 'chronic'
 require 'erb'
 require 'ostruct'
+require 'forwardable'
 
 require 'kronos/config_agent'
 require 'kronos/dependencies'

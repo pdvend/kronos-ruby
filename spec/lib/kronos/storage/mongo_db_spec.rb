@@ -3,6 +3,7 @@
 RSpec.describe Kronos::Storage::MongoDb do
   let(:scheduled_task_model) { described_class::SHEDULED_TASK_MODEL }
   let(:report_model) { described_class::REPORT_MODEL }
+  let(:lock_model) { described_class::LOCK_MODEL }
 
   describe '#scheduled_tasks' do
     subject { described_class.new.scheduled_tasks }
@@ -104,22 +105,27 @@ RSpec.describe Kronos::Storage::MongoDb do
   describe '#reports' do
     subject { described_class.new.reports }
 
-    let(:report) do
+    let(:success_report) do
       double(:report,
              task_id: task_id,
              metadata: metadata,
+             status: Kronos::Report::STATUSES[:success],
+             timestamp: timestamp)
+    end
+    let(:failure_report) do
+      double(:report,
+             task_id: task_id,
              exception: exception,
-             status: status,
+             status: Kronos::Report::STATUSES[:failure],
              timestamp: timestamp)
     end
     let(:task_id) { :task_id }
     let(:metadata) { {} }
-    let(:exception) { nil }
-    let(:status) { 0 }
+    let(:exception) { { type: 'ArgumentError', message: 'fake message', stacktrace: [] } }
     let(:timestamp) { Time.now }
 
     before do
-      allow(report_model).to receive(:all).and_return([report])
+      allow(report_model).to receive(:all).and_return([success_report, failure_report])
     end
 
     it 'get all ReportModel' do
@@ -127,13 +133,20 @@ RSpec.describe Kronos::Storage::MongoDb do
       subject
     end
 
-    it 'return correct Report' do
+    it 'return correct Reports from success' do
       expect(subject.first).to be_a(Kronos::Report)
       expect(subject.first.task_id).to eq(task_id)
       expect(subject.first.metadata).to eq(metadata)
-      expect(subject.first.exception).to eq(exception)
-      expect(subject.first.status).to eq(status)
       expect(subject.first.timestamp).to eq(timestamp)
+      expect(subject.first).to be_success
+    end
+
+    it 'return correct Reports from failure' do
+      expect(subject.last).to be_a(Kronos::Report)
+      expect(subject.last.task_id).to eq(task_id)
+      expect(subject.last.exception).to eq(exception)
+      expect(subject.last.timestamp).to eq(timestamp)
+      expect(subject.last).to be_failure
     end
   end
 
@@ -170,6 +183,101 @@ RSpec.describe Kronos::Storage::MongoDb do
       expect(report_model).to receive(:where).with(task_id: task_id).and_return(where_response)
       expect(where_response).to receive(:destroy_all)
       subject
+    end
+  end
+
+  describe '#locked_task?' do
+    subject { instance.locked_task?(task_id) }
+    let(:instance) { described_class.new }
+    let(:task_id) { :task }
+    let(:where_response) { double(:where_response) }
+
+    before do
+      allow(lock_model).to receive(:where).with(task_id: task_id).and_return(where_response)
+      allow(where_response).to receive(:exists?).and_return(exists_response)
+      allow(lock_model).to receive(:create)
+    end
+
+    context 'when the task was locked before' do
+      let(:exists_response) { true }
+      before { instance.lock_task(task_id) }
+      it { is_expected.to be_truthy }
+    end
+
+    context 'when the task was not locked before' do
+      let(:exists_response) { false }
+      it { is_expected.to be_falsey }
+    end
+  end
+
+  describe '#lock_task' do
+    subject { instance.lock_task(task_id) }
+    let(:instance) { described_class.new }
+    let(:task_id) { :task }
+
+    before { allow(lock_model).to receive(:create) }
+
+    it { is_expected.to be_a(String) }
+    it { is_expected.to_not be_empty }
+  end
+
+  describe '#check_lock' do
+    subject { instance.check_lock(task_id, lock_id) }
+    let(:instance) { described_class.new }
+    let(:task_id) { :task }
+    let(:where_response) { double(:where_response) }
+
+    before do
+      allow(lock_model).to receive(:create)
+      allow(lock_model).to receive(:where).with(task_id: task_id, value: lock_id).and_return(where_response)
+      allow(where_response).to receive(:exists?).and_return(exists_response)
+    end
+
+    context 'when the lock is not registered' do
+      let(:exists_response) { false }
+      let(:lock_id) { SecureRandom.uuid }
+      it { is_expected.to be_falsey }
+    end
+
+    context 'when the lock has the specified lock value' do
+      let(:exists_response) { true }
+      let(:lock_id) { instance.lock_task(task_id) }
+      it { is_expected.to be_truthy }
+    end
+
+    context 'when the lock has not the specified lock value' do
+      before { instance.lock_task(task_id) }
+      let(:exists_response) { false }
+      let(:lock_id) { SecureRandom.uuid }
+      it { is_expected.to be_falsey }
+    end
+  end
+
+  describe '#release_lock' do
+    subject { instance.release_lock(task_id) }
+    let(:instance) { described_class.new }
+    let(:task_id) { :task }
+    let(:where_response) { double(:where_response) }
+
+    before do
+      allow(lock_model).to receive(:where).with(task_id: task_id).and_return(where_response)
+      allow(lock_model).to receive(:create)
+    end
+
+    context 'when the lock is registered' do
+      before { instance.lock_task(task_id) }
+
+      it 'unregisters the lock' do
+        expect(where_response).to receive(:destroy_all)
+        subject
+      end
+    end
+
+    context 'when the lock is not registered' do
+      it 'tries to delete all matching locks' do
+        expect(where_response).to receive(:destroy_all)
+        subject
+      end
     end
   end
 end

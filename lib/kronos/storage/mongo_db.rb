@@ -2,13 +2,16 @@
 
 require 'kronos/storage/mongo/model/scheduled_task_model'
 require 'kronos/storage/mongo/model/report_model'
+require 'kronos/storage/mongo/model/lock_model'
 
 module Kronos
   module Storage
     # :reek:UtilityFunction:
+    # :reek:TooManyMethods:
     class MongoDb
       SHEDULED_TASK_MODEL = Mongo::Model::ScheduledTaskModel
       REPORT_MODEL = Mongo::Model::ReportModel
+      LOCK_MODEL = Mongo::Model::LockModel
 
       def scheduled_tasks
         # Returns all current Kronos::ScheduledTask, resolved or pending
@@ -51,6 +54,24 @@ module Kronos
         # Checks if task has any pending scheduled task (where scheduled_task.next_run > Time.now)
         query = SHEDULED_TASK_MODEL.where(task_id: task.id)
         query.exists? && query.first.next_run > Time.now
+      end
+
+      def locked_task?(task_id)
+        LOCK_MODEL.where(task_id: task_id).exists?
+      end
+
+      def lock_task(task_id)
+        SecureRandom.uuid.tap do |lock_id|
+          LOCK_MODEL.create(task_id: task_id, value: lock_id)
+        end
+      end
+
+      def check_lock(task_id, lock_id)
+        LOCK_MODEL.where(task_id: task_id, value: lock_id).exists?
+      end
+
+      def release_lock(task_id)
+        LOCK_MODEL.where(task_id: task_id).destroy_all
       end
 
       private
